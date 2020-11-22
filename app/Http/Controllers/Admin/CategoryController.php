@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 
@@ -48,6 +49,9 @@ class CategoryController extends Controller
             $category->addMedia($request->image)
                 ->toMediaCollection('cover_image');
         }
+
+        Session::flash('success', 'Category Deleted Successfully');
+        return redirect()->route('admin.categories.index');
     }
 
     /**
@@ -67,9 +71,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Category $category)
     {
-        //
+        return view('admin.categories.edit', compact('category'));
     }
 
     /**
@@ -79,9 +83,20 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCategoryRequest $request, $id)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
+        if ($request->hasFile('image')) {
+            $category->clearMediaCollection('cover_image');
+            $category->addMedia($request->image)
+                ->toMediaCollection('cover_image');
+        }
+
+        $category->update([
+            'name' => $request->name
+        ]);
+
+        Session::flash('success', 'Category Updated Successfully');
+        return redirect()->route('admin.categories.index');
     }
 
     /**
@@ -90,8 +105,13 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        //
+        $category->clearMediaCollection();
+        $category->delete();
+
+        Session::flash('success', 'Category Deleted Successfully');
+
+        return redirect()->route('admin.categories.index');
     }
 }

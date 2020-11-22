@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -19,6 +20,9 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('categories/create', 'Admin\CategoryController@create')->name('admin.categories.create');
     Route::post('categories/create', 'Admin\CategoryController@store')->name('admin.categories.store');
     Route::get('categories/{category}', 'Admin\CategoryController@show')->name('admin.categories.show');
+    Route::get('categories/{category}/edit', 'Admin\CategoryController@edit')->name('admin.categories.edit');
+    Route::put('categories/{category}/edit', 'Admin\CategoryController@update')->name('admin.categories.update');
+    Route::delete('categories/{category}', 'Admin\CategoryController@destroy')->name('admin.categories.delete');
 
     Route::get('products', 'Admin\ProductController@index')->name('admin.products.index');
     Route::get('products/create', 'Admin\ProductController@create')->name('admin.products.create');
